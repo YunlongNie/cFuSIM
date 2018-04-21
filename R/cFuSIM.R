@@ -105,7 +105,7 @@ Pmat_non = Pmat[nonzero,nonzero]
 W_non= Wmat$W[nonzero,nonzero]
 betac_non= betac[nonzero] 
 B_non = B[nonzero, nonzero]
-betact = try(solve(Pmat_non + W_non+gamma*B_non, Pmat_non%*%betac_non), silent=TRUE)
+betact = try(solve(Pmat_non + W_non, Pmat_non%*%betac_non), silent=TRUE)
 if(class(betact)=="try-error") break
 betac = rep(0, spline_basis$nbasis)
 (betac[nonzero]= betact)
