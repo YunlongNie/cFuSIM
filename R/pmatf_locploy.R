@@ -1,6 +1,7 @@
 #' @import fda
 #' @import dplyr
 #' @import NonpModelCheck
+
 pmatf_locploy = function(betac ,ytrain=ytrain,xtrain=xtrain, spline_basis){
 B = inprod(spline_basis,spline_basis,0,0)
 pc_fit = fd(betac,spline_basis)

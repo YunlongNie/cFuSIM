@@ -1,7 +1,8 @@
 #' @import fda
 #' @import dplyr
 #' @import DiceKriging
-W0=  function(beta_j,lambda,bspi,normthres=10^-2){
+
+W0=  function(beta_j,lambda,bspi,W_m, normthres=10^-2){
 W = inprod(bspi,bspi,1,1)
 R = inprod(bspi,bspi)
 r = inprod(bspi,bspi,2,2)
@@ -13,7 +14,7 @@ range_knots = knots(bspi,interior=FALSE)%>%range
     wi = function(i){
     zero = NULL       
     beta_m_norm =  t(as.matrix(beta_j))%*%W_m[[i]]%*%as.matrix(beta_j)%>%as.numeric%>%sqrt
-             #print(beta_m_norm)
+    
     if(beta_m_norm < normthres)   {
 
         zero = c(i:(i+3))

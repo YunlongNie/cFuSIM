@@ -1,5 +1,6 @@
 #' @import fda
 #' @import dplyr
+
 wtemp = function(xbasis0) {
         xbasis0 %>% knots(, interior = FALSE) %>% unique %>% 
             data.frame(knot = .) %>% mutate(knotlead = lead(knot)) %>% 
@@ -7,3 +8,4 @@ wtemp = function(xbasis0) {
             do(temp = eval.penalty(xbasis0, int2Lfd(0), rng = c(.$knot, 
                 .$knotlead)))
     }
+
