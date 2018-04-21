@@ -51,7 +51,7 @@ Pmat = mattemp%*%t(mattemp)
 Pmat 
 }
 
-W0=  function(beta_j,lambda,bspi,normthres=10^-2){
+W0=  function(beta_j,lambda,bspi,W_m, normthres=10^-2){
 W = inprod(bspi,bspi,1,1)
 R = inprod(bspi,bspi)
 r = inprod(bspi,bspi,2,2)
@@ -97,7 +97,7 @@ i=i+1
 if(i>maxit) break
 betac0 = betac
 Pmat = pmatf_locploy(betac,y,xfd,spline_basis)
-Wmat = W0(betac,normthres=normthres,lambda=lambda,bspi=spline_basis)
+Wmat = W0(betac,normthres=normthres,lambda=lambda,bspi=spline_basis,W_m=W_m)
 (nonzero  =setdiff(1:spline_basis$nbasis,Wmat$zero))
 Pmat_non = Pmat[nonzero,nonzero]
 W_non= Wmat$W[nonzero,nonzero]
