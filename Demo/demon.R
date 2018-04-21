@@ -19,6 +19,6 @@
  train_sample = 1:length(y)
  y = y[train_sample]
  xfd = xfds[train_sample]
- res_c = cFuSIM(y, xfd, spline_basis)
+ res_c = cFuSIM_index(y, xfd, spline_basis)
  beta_fd = fd(res_c$coefBeta, res_c$basisBeta)
  plot(beta_fd)
