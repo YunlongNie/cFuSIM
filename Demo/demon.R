@@ -21,14 +21,16 @@
  xfd = xfds[train_sample]
  res_c = cFuSIM_index(y, xfd, spline_basis)
  beta_fd = fd(res_c$coefBeta, res_c$basisBeta)
- plot(beta_fd,ylab="index function", xlab='time')
-fdagg(beta_fd)
+ 
+ # plot the index function 
+ fdagg(beta_fd,ylab="index function", xlab='time')
  score_fit = (res_c$score_fit)
  pred_y = localpoly.reg(score_fit, y, degree.pol = 1, kernel.type = "gaussian",bandwidth = "CV",deriv=0,points=score_fit)
+ # plot the fitted integral vs the response 
  plot(x=score_fit, y=y)
  lines(pred_y$predicted[order(score_fit)],x=score_fit[order(score_fit)],col=4)
 
-
+## compute BIC 
 fity = pred_y$predicted
 mse  = mean((y - fity)^2)
 p = sum(res_c$coefBeta!=0)
