@@ -97,7 +97,7 @@ i=i+1
 if(i>maxit) break
 betac0 = betac
 Pmat = pmatf_locploy(betac,y,xfd,spline_basis)
-Wmat = W0(betac,normthres=normthres,lambda=lambda,bspi=spline_basis,W_m=W_m)
+Wmat = W0(betac,normthres=1e-4,lambda=lambda,bspi=spline_basis,W_m=W_m)
 (nonzero  =setdiff(1:spline_basis$nbasis,Wmat$zero))
 Pmat_non = Pmat[nonzero,nonzero]
 W_non= Wmat$W[nonzero,nonzero]
