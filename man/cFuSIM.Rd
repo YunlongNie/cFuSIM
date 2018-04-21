@@ -21,13 +21,20 @@ This function computes the coeffcients of the index function
 }
 \examples{
 \dontrun{
-data(binary_dat);xmat = binary_dat$x;y=binary_dat$y
-res = sfpcs_binary(xmat,y,npc_select=2,theta=1,xmat_new = xmat)
-res$fitted
-mean(y==res$fitted) # fitted accuracy
-res$fitted # prediction on new data 
-res$sfpcs # sFPCs 
-res$beta_fd # coefficient function
+library(fda)
+library(cFuSIM)
+data(bike_cFuSIM)
+norder=4 ## cubic B-spline
+nbasis=norder+length(timepts)-2; 
+spline.basis=create.bspline.basis(rangeval=c(1,24),nbasis,norder,timepts)
+wull = bike$temp
+xfds=  Data2fd(y=wull\%>\%t, argvals=bike$timepts)
+y = bike$y
+train_sample = 1:length(y)
+y = y[train_sample]
+xfd = xfds[train_sample]
+res_c = cFuSIM(y, xfd, spline_basis)
+beta_fd = fd(res_c$coefBeta, res_c$basisBeta)
+plot(beta_fd)
 }
-
 }
