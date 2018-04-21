@@ -27,3 +27,10 @@ fdagg(beta_fd)
  pred_y = localpoly.reg(score_fit, y, degree.pol = 1, kernel.type = "gaussian",bandwidth = "CV",deriv=0,points=score_fit)
  plot(x=score_fit, y=y)
  lines(pred_y$predicted[order(score_fit)],x=score_fit[order(score_fit)],col=4)
+
+
+fity = pred_y$predicted
+mse  = mean((y - fity)^2)
+p = sum(res_c$coefBeta!=0)
+bic = length(y)*log(mse)+log(length(y))*(p+1)
+
