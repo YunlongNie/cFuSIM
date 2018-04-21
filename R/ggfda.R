@@ -3,7 +3,7 @@
 #' @export fdagg 
 #' @import fda
 #' @import dplyr
-#' @import ggplot
+#' @import ggplot2
 #' @examples
 #' \dontrun{
 #' library(fda)
