@@ -7,6 +7,7 @@
 #' @import fda
 #' @import dplyr
 #' @import NonpModelCheck
+#' @import DiceKriging
 #' @examples
 #' \dontrun{
 #' library(fda)
@@ -63,7 +64,7 @@ range_knots = knots(bspi,interior=FALSE)%>%range
     wi = function(i){
     zero = NULL       
     beta_m_norm =  t(as.matrix(beta_j))%*%W_m[[i]]%*%as.matrix(beta_j)%>%as.numeric%>%sqrt
-             #print(beta_m_norm)
+    
     if(beta_m_norm < normthres)   {
 
         zero = c(i:(i+3))
