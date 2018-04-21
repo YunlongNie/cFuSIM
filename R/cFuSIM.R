@@ -6,6 +6,7 @@
 #' @export cFuSIM
 #' @import fda
 #' @import dplyr
+#' @import NonpModelCheck
 #' @examples
 #' \dontrun{
 #' library(fda)
@@ -94,7 +95,7 @@ while(thes>threshold){
 i=i+1
 if(i>maxit) break
 betac0 = betac
-Pmat = pmatf_locploy(betac,y,xfd)
+Pmat = pmatf_locploy(betac,y,xfd,spline_basis)
 Wmat = W0(betac,normthres=normthres,lambda=lambda,bspi=spline_basis)
 (nonzero  =setdiff(1:spline_basis$nbasis,Wmat$zero))
 Pmat_non = Pmat[nonzero,nonzero]
