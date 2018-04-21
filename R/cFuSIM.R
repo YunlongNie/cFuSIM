@@ -88,6 +88,7 @@ return(list( W = W_j0, zero = zero))
 
 cFuSIM = function(y, xfd, spline_basis, threshold=1e-5, maxit=150,lambda=1e4){
 (betac= rep(1, spline_basis$nbasis))
+B = inprod(spline_basis,spline_basis,0,0)
 W_m = wtemp(spline_basis )$temp
 thes = 1
 i = 1
