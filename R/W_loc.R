@@ -7,7 +7,7 @@ W = inprod(bspi,bspi,1,1)
 R = inprod(bspi,bspi)
 r = inprod(bspi,bspi,2,2)
 
-range_knots = knots(bspi,interior=FALSE)%>%range
+range_knots = fda:::knots.basisfd(bspi,interior=FALSE)%>%range
 
  
 
