@@ -1,3 +1,11 @@
+#' This function uses cv to select the optimal tuning parameters
+#' @export cv_cFuSIM 
+#' @import fda
+#' @import dplyr
+#' @import ggplot2
+#' @examples
+#' \dontrun{
+#' }
 
 cv_cFuSIM = function(y,xfds, log10lambda=c(),gamma=c(),bandwidth=c(),spline_basis=xfds$basis, k=3, ...){
   parameters = expand.grid( log10lambda =  log10lambda, gamma=gamma, bandwidth=bandwidth)
