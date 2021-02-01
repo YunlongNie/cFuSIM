@@ -6,6 +6,7 @@
 #' @export cFuSIM_index
 #' @import fda
 #' @import dplyr
+#' @import slos
 #' @import NonpModelCheck
 #' @import DiceKriging
 #' @examples
@@ -93,41 +94,62 @@
 # }
 
 
-cFuSIM_index = function(y, xfd, spline_basis, threshold=1e-5, maxit=150,lambda=1e4){
-(betac= rep(1, spline_basis$nbasis))
-B = inprod(spline_basis,spline_basis,0,0)
-W_m = wtemp(spline_basis )$temp
-thes = 1
-i = 1
-thresb=3
-while(thes>threshold){
-i=i+1
-if(i>maxit) break
-betac0 = betac
-Pmat = pmatf_locploy(betac,y,xfd,spline_basis)
-Wmat = W0(betac,normthres=1e-4,lambda=lambda,bspi=spline_basis,W_m=W_m)
-(nonzero  =setdiff(1:spline_basis$nbasis,Wmat$zero))
-Pmat_non = Pmat[nonzero,nonzero]
-W_non= Wmat$W[nonzero,nonzero]
-betac_non= betac[nonzero] 
-B_non = B[nonzero, nonzero]
-betact = try(solve(Pmat_non + W_non, Pmat_non%*%betac_non), silent=TRUE)
-if(class(betact)=="try-error") break
-betac = rep(0, spline_basis$nbasis)
-(betac[nonzero]= betact)
-score_fit = inprod(fd(betac, spline_basis), xfd)
-betac = 10*betac/sqrt(sum((score_fit^2)))
-pc_fit = fd(betac,spline_basis)
-if(as.numeric(inprod(pc_fit))<0) betac= -betac
-thes  = abs(betac-betac0)%>%max
-thresb =thes
-}
-
-converaged=(thes< threshold)
-
-betac = betac/sqrt(as.numeric(t(betac)%*%B%*%betac))
-pc_fit = fd(betac,spline_basis)
-score_fit = inprod(xfd,pc_fit)%>%as.numeric
-list(coefBeta=betac, basisBeta = spline_basis, score_fit = score_fit, Converaged=converaged, threshold=threshold, maxit=maxit)
+cFuSIM_index = function(y, xfd, spline_basis, threshold=1e-5, maxit=150,lambda=1e4, verbose=TRUE){
+  lambda = 10^log10lambda
+  # set.seed(1001011)
+  (betac= rep(1,spline_basis$nbasis))
+  B = inprod(spline_basis,spline_basis,0,0)
+  betac = betac/sqrt(as.numeric(t(betac)%*%B%*%betac))
+  
+  GAMMA = inprod(spline_basis,spline_basis,2,2)
+  W_m = wtemp(spline_basis )$temp
+  thes = 1
+  i = 1
+  thresb= 3
+  while(thes>threshold){
+    i=i+1
+    if(i>maxit) break
+    betac0 = betac
+    pmatf = pmatf_locploy(betac,y,xfd,spline_basis,bandwidth="CV")
+    yweighted = as.numeric(pmatf$yweighted)
+    nrowx = nrow(coef(xfd))
+    xfds_weighted = fd(rep(pmatf$weights, each=nrowx)%>%matrix(nrow=nrowx)*coef(xfd), xfd$basis)
+    beta_basis = list()
+    beta_basis[[1]] = spline_basis
+    fit <- try(slos(xfds_weighted,yweighted%>%as.numeric,D=NULL,lambda=lambda,gamma=gamma,intercept=F,beta.basis=beta_basis,cutoff=1e-4,
+                          max.iter=1000,tol=1e-12,a=3.7,domain=NULL, tuning = "BIC"), silent=TRUE)
+    if(class(fit)=="try-error") 
+    {
+      betac = rep(0, spline_basis$nbasis) 
+      thes = 0
+    } else {
+      bandwidth = pmatf$bandwidth
+      betac = fit$beta[[1]]%>%coef%>%as.numeric
+      pc_fit = fit$beta[[1]]
+      betac = betac/sqrt(as.numeric(t(betac)%*%B%*%betac))
+      pc_fit = fd(betac,spline_basis)
+      score_fit = inprod(xfd,pc_fit)%>%as.numeric
+      if(as.numeric(inprod(pc_fit))<0) {
+        betac= -betac
+        pc_fit = fd(betac,spline_basis)
+      }
+      
+      thes  = abs(betac-betac0)%>%max
+      thresb =thes
+     if(verbose){
+      plot(pc_fit) 
+      print(thresb)
+      }
+    }
+    
+  }
+  
+  converaged=(thes< threshold)
+  if(!all(betac==0)){
+    betac = betac/sqrt(as.numeric(t(betac)%*%B%*%betac))
+  }
+  pc_fit = fd(betac,spline_basis)
+  score_fit = inprod(xfd,pc_fit)%>%as.numeric
+  list(coefBeta=betac, basisBeta = spline_basis, score_fit = score_fit, Converaged=converaged, threshold=threshold, maxit=maxit, bandwidth = bandwidth)
 }
 
