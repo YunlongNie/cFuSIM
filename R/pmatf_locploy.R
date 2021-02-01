@@ -15,8 +15,6 @@ pmatf_locploy = function(betac ,ytrain=ytrain,xtrain=xtrain, spline_basis){
   loc_fit = localpoly.reg(score_fit, ytrain, degree.pol = 1,
                           kernel.type = "gaussian", bandwidth = loc_fit$bandwidth, deriv = 1)
   derfity = loc_fit$predicted
-  
-  Gmat = list()
   yweighted = ytrain - fity + derfity*(Z%*%betac)
   list( bandwidth = select_bandwith, weights = -derfity, yweighted = yweighted, Z = Z)
 }
